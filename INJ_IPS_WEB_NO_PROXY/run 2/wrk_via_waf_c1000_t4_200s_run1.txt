@@ -1,0 +1,14 @@
+Running 3m test @ http://10.0.2.2/
+  4 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    75.24ms  130.96ms   2.00s    97.88%
+    Req/Sec     1.89k   196.03     2.69k    74.50%
+  Latency Distribution
+     50%   56.94ms
+     75%   71.94ms
+     90%   90.95ms
+     99%  797.34ms
+  1480620 requests in 3.34m, 350.35MB read
+  Socket errors: connect 0, read 17950, write 1, timeout 22966
+Requests/sec:   7399.37
+Transfer/sec:      1.75MB

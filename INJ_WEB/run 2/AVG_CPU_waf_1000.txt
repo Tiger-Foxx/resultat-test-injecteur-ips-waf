@@ -1,0 +1,5 @@
+The_Fox@waf:~$ cat /users/The_Fox/tests/summary_waf.txt
+Summary for WAF run (duration 210s)
+
+AVG busy (all cpus) = 19.38 % (avg idle=80.62%) over 2090 samples
+avg %CPU (apache process) = 0.00 % over 5852 samples

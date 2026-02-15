@@ -1,0 +1,4 @@
+Résumé de la mesure IPS (durée 200s)
+
+AVG busy (all cpus) = 22.44 % (avg idle=77.56%) over 2010 samples
+avg %CPU (suricata process) = 0.00 % over 398 samples

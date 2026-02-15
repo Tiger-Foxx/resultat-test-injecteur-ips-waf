@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Rapport d'analyse — WAF/IPS Performance</title>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;margin:20px;color:#333;background-color:#f8f9fa}
+h1,h2{color:#0b4d8a;border-bottom:2px solid #0b4d8a;padding-bottom:5px}
+h1{font-size:28px}h2{font-size:20px}
+.table{border-collapse:collapse;width:100%;background:white;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+.table th, .table td{border:1px solid #dee2e6;padding:8px;font-size:11px}
+.table th{background-color:#e9ecef;font-weight:bold;text-align:center}
+.imgbox{margin:20px 0;padding:15px;border:1px solid #dee2e6;background:white;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+.imgbox h3{margin-top:0;color:#495057}
+.imgbox img{max-width:100%;height:auto;border:1px solid #dee2e6;border-radius:4px}
+.header{background:linear-gradient(135deg,#0b4d8a,#2e86ab);color:white;padding:20px;border-radius:8px;margin-bottom:20px}
+.summary{background:white;padding:15px;border-radius:8px;margin-bottom:20px;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+pre{background:#f8f9fa;padding:10px;border:1px solid #dee2e6;border-radius:4px;overflow-x:auto;font-size:11px}
+</style>
+</head><body>
+
+<div class="header">
+<h1>📊 Rapport d'Analyse de Performance WAF/IPS</h1>
+<p><strong>Généré le:</strong> 2025-09-12T09:02:57.529481Z (UTC)</p>
+<p><em>Analyse automatisée des métriques de performance pour différents scénarios d'architecture réseau</em></p>
+</div>
+
+<div class="summary">
+<h2>🔍 Légende des scénarios testés</h2>
+<table class='table'><tr><th>Scénario</th><th>Description</th></tr><tr><td><strong>INJ_IPS_WAF_WEB</strong></td><td>Injector → IPS (Suricata) actif → WAF (proxy Apache avec ModSecurity) actif → Backend web. Test complet avec IDS/IPS et WAF inline.</td></tr><tr><td><strong>INJ_IPS_WEB_NO_PROXY</strong></td><td>Injector → IPS actif → connexion directe vers le Backend (pas de proxy WAF). Permet mesurer l'impact de l'IPS seul.</td></tr><tr><td><strong>INJ_IPS_WEB_PROXY</strong></td><td>Injector → IPS actif → WAF machine en mode proxy (sans ModSecurity activé) → Backend. Mesure l'overhead du proxy seul avec IPS.</td></tr><tr><td><strong>INJ_NFQ_WAF_WEB</strong></td><td>Injector → NFQUEUE présent mais Suricata pas en mode bloquant (ou acceptant) → WAF actif → Backend. Test du cas où NFQUEUE est installé mais trafic accepté.</td></tr><tr><td><strong>INJ_WAF_WEB</strong></td><td>Injector → Pas d'IPS → WAF (proxy + ModSecurity) actif → Backend. Mesure l'impact du WAF seul.</td></tr><tr><td><strong>INJ_WEB</strong></td><td>Injector → Pas d'IPS → Pas de proxy (accès direct au Backend). Mesures baseline sans WAF ni proxy ni IPS.</td></tr><tr><td><strong>INJ_WEB_PROXY</strong></td><td>Injector → Pas d'IPS → Proxy (WAF machine en tant que reverse-proxy, ModSecurity désactivé) → Backend. Test proxy sans fonctionnalités WAF.</td></tr><tr><td><strong>NO INJECTION</strong></td><td>Tests sans trafic d'injection (contrôles ou mesures à vide).</td></tr></table>
+</div>
+
+<div class="summary">
+<h2>📈 Résumé des métriques collectées</h2>
+<table border="1" class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>scenario</th>
+      <th>scenario_desc</th>
+      <th>run</th>
+      <th>concurrency</th>
+      <th>path</th>
+      <th>avg_busy_ips</th>
+      <th>avg_idle_ips</th>
+      <th>samples_ips</th>
+      <th>avg_busy_waf</th>
+      <th>avg_idle_waf</th>
+      <th>samples_waf</th>
+      <th>requests_per_sec</th>
+      <th>p50</th>
+      <th>p75</th>
+      <th>p90</th>
+      <th>p99</th>
+      <th>socket_errors</th>
+      <th>transfer_per_sec</th>
+      <th>wrk_file</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>INJ_IPS_WAF_WEB</td>
+      <td>Injector → IPS (Suricata) actif → WAF (proxy Apache avec ModSecurity) actif → Backend web. Test complet avec IDS/IPS et WAF inline.</td>
+      <td>run 1</td>
+      <td>500.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WAF_WEB\run 1</td>
+      <td>22.51</td>
+      <td>77.49</td>
+      <td>2010</td>
+      <td>77.87</td>
+      <td>22.13</td>
+      <td>2090</td>
+      <td>2363.00</td>
+      <td>0.065</td>
+      <td>0.528</td>
+      <td>0.843</td>
+      <td>1.030</td>
+      <td>connect 0, read 73477, write 0, timeout 311</td>
+      <td>572.29</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WAF_WEB\run 1\wrk_via_waf_c500_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_IPS_WAF_WEB</td>
+      <td>Injector → IPS (Suricata) actif → WAF (proxy Apache avec ModSecurity) actif → Backend web. Test complet avec IDS/IPS et WAF inline.</td>
+      <td>run 2</td>
+      <td>1000.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WAF_WEB\run 2</td>
+      <td>22.44</td>
+      <td>77.56</td>
+      <td>398</td>
+      <td>77.81</td>
+      <td>22.19</td>
+      <td>2090</td>
+      <td>2332.01</td>
+      <td>0.064</td>
+      <td>0.657</td>
+      <td>1.280</td>
+      <td>1.510</td>
+      <td>connect 0, read 72944, write 13, timeout 1000</td>
+      <td>564.78</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WAF_WEB\run 2\wrk_via_waf_c1000_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_IPS_WAF_WEB</td>
+      <td>Injector → IPS (Suricata) actif → WAF (proxy Apache avec ModSecurity) actif → Backend web. Test complet avec IDS/IPS et WAF inline.</td>
+      <td>run 3</td>
+      <td>300.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WAF_WEB\run 3</td>
+      <td>22.63</td>
+      <td>77.37</td>
+      <td>2010</td>
+      <td>77.29</td>
+      <td>22.71</td>
+      <td>2090</td>
+      <td>2359.05</td>
+      <td>0.063</td>
+      <td>0.210</td>
+      <td>0.367</td>
+      <td>0.473</td>
+      <td>connect 0, read 73605, write 0, timeout 0</td>
+      <td>571.33</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WAF_WEB\run 3\wrk_via_waf_c300_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_IPS_WEB_NO_PROXY</td>
+      <td>Injector → IPS actif → connexion directe vers le Backend (pas de proxy WAF). Permet mesurer l'impact de l'IPS seul.</td>
+      <td>run 1</td>
+      <td>500.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WEB_NO_PROXY\run 1</td>
+      <td>32.33</td>
+      <td>67.67</td>
+      <td>2010</td>
+      <td>11.59</td>
+      <td>88.41</td>
+      <td>2090</td>
+      <td>7116.44</td>
+      <td>0.060</td>
+      <td>0.075</td>
+      <td>0.101</td>
+      <td>0.888</td>
+      <td>connect 0, read 13066, write 0, timeout 157</td>
+      <td>1720.32</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WEB_NO_PROXY\run 1\wrk_via_waf_c500_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_IPS_WEB_NO_PROXY</td>
+      <td>Injector → IPS actif → connexion directe vers le Backend (pas de proxy WAF). Permet mesurer l'impact de l'IPS seul.</td>
+      <td>run 2</td>
+      <td>1000.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WEB_NO_PROXY\run 2</td>
+      <td>33.28</td>
+      <td>66.72</td>
+      <td>2010</td>
+      <td>11.62</td>
+      <td>88.38</td>
+      <td>2090</td>
+      <td>7399.37</td>
+      <td>0.057</td>
+      <td>0.072</td>
+      <td>0.091</td>
+      <td>0.797</td>
+      <td>connect 0, read 17950, write 1, timeout 22966</td>
+      <td>1792.00</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WEB_NO_PROXY\run 2\wrk_via_waf_c1000_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_IPS_WEB_PROXY</td>
+      <td>Injector → IPS actif → WAF machine en mode proxy (sans ModSecurity activé) → Backend. Mesure l'overhead du proxy seul avec IPS.</td>
+      <td>run 1</td>
+      <td>500.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WEB_PROXY\run 1</td>
+      <td>32.96</td>
+      <td>67.04</td>
+      <td>2010</td>
+      <td>30.65</td>
+      <td>69.35</td>
+      <td>2090</td>
+      <td>7225.45</td>
+      <td>0.059</td>
+      <td>0.073</td>
+      <td>0.096</td>
+      <td>0.652</td>
+      <td>connect 0, read 44002, write 0, timeout 63</td>
+      <td>1751.04</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WEB_PROXY\run 1\wrk_via_waf_c500_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_IPS_WEB_PROXY</td>
+      <td>Injector → IPS actif → WAF machine en mode proxy (sans ModSecurity activé) → Backend. Mesure l'overhead du proxy seul avec IPS.</td>
+      <td>run 2</td>
+      <td>1000.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WEB_PROXY\run 2</td>
+      <td>31.86</td>
+      <td>68.14</td>
+      <td>2010</td>
+      <td>29.91</td>
+      <td>70.09</td>
+      <td>2090</td>
+      <td>6800.98</td>
+      <td>0.064</td>
+      <td>0.089</td>
+      <td>0.729</td>
+      <td>1.620</td>
+      <td>connect 0, read 50828, write 0, timeout 17899</td>
+      <td>1648.64</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_IPS_WEB_PROXY\run 2\wrk_via_waf_c1000_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_NFQ_WAF_WEB</td>
+      <td>Injector → NFQUEUE présent mais Suricata pas en mode bloquant (ou acceptant) → WAF actif → Backend. Test du cas où NFQUEUE est installé mais trafic accepté.</td>
+      <td>run 1</td>
+      <td>500.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_NFQ_WAF_WEB\run 1</td>
+      <td>14.56</td>
+      <td>85.44</td>
+      <td>1990</td>
+      <td>79.46</td>
+      <td>20.54</td>
+      <td>2090</td>
+      <td>2401.52</td>
+      <td>0.066</td>
+      <td>0.540</td>
+      <td>0.848</td>
+      <td>1.030</td>
+      <td>connect 0, read 75214, write 0, timeout 23</td>
+      <td>581.62</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_NFQ_WAF_WEB\run 1\wrk_via_waf_c500_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_NFQ_WAF_WEB</td>
+      <td>Injector → NFQUEUE présent mais Suricata pas en mode bloquant (ou acceptant) → WAF actif → Backend. Test du cas où NFQUEUE est installé mais trafic accepté.</td>
+      <td>run 2</td>
+      <td>1000.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_NFQ_WAF_WEB\run 2</td>
+      <td>14.72</td>
+      <td>85.28</td>
+      <td>1990</td>
+      <td>79.30</td>
+      <td>20.70</td>
+      <td>5658</td>
+      <td>2417.50</td>
+      <td>0.063</td>
+      <td>0.674</td>
+      <td>1.240</td>
+      <td>1.470</td>
+      <td>connect 0, read 76764, write 9, timeout 474</td>
+      <td>585.49</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_NFQ_WAF_WEB\run 2\wrk_via_waf_c1000_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_WAF_WEB</td>
+      <td>Injector → Pas d'IPS → WAF (proxy + ModSecurity) actif → Backend. Mesure l'impact du WAF seul.</td>
+      <td>run 1</td>
+      <td>500.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_WAF_WEB\run 1</td>
+      <td>11.75</td>
+      <td>88.25</td>
+      <td>1990</td>
+      <td>79.20</td>
+      <td>20.80</td>
+      <td>5630</td>
+      <td>2424.54</td>
+      <td>0.066</td>
+      <td>0.541</td>
+      <td>0.841</td>
+      <td>1.040</td>
+      <td>connect 0, read 75709, write 0, timeout 5</td>
+      <td>587.19</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_WAF_WEB\run 1\wrk_via_waf_c500_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_WAF_WEB</td>
+      <td>Injector → Pas d'IPS → WAF (proxy + ModSecurity) actif → Backend. Mesure l'impact du WAF seul.</td>
+      <td>run 2</td>
+      <td>1000.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_WAF_WEB\run 2</td>
+      <td>11.67</td>
+      <td>88.33</td>
+      <td>1990</td>
+      <td>79.50</td>
+      <td>20.50</td>
+      <td>2090</td>
+      <td>2401.69</td>
+      <td>0.063</td>
+      <td>0.640</td>
+      <td>1.270</td>
+      <td>1.480</td>
+      <td>connect 0, read 75288, write 8, timeout 594</td>
+      <td>581.66</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_WAF_WEB\run 2\wrk_via_waf_c1000_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_WEB</td>
+      <td>Injector → Pas d'IPS → Pas de proxy (accès direct au Backend). Mesures baseline sans WAF ni proxy ni IPS.</td>
+      <td>run 1</td>
+      <td>500.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_WEB\run 1</td>
+      <td>19.37</td>
+      <td>80.63</td>
+      <td>1990</td>
+      <td>19.20</td>
+      <td>80.80</td>
+      <td>2090</td>
+      <td>33549.19</td>
+      <td>0.012</td>
+      <td>0.031</td>
+      <td>0.044</td>
+      <td>0.069</td>
+      <td>connect 0, read 1775077, write 0, timeout 0</td>
+      <td>8120.32</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_WEB\run 1\wrk_via_waf_c500_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_WEB</td>
+      <td>Injector → Pas d'IPS → Pas de proxy (accès direct au Backend). Mesures baseline sans WAF ni proxy ni IPS.</td>
+      <td>run 2</td>
+      <td>1000.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_WEB\run 2</td>
+      <td>19.58</td>
+      <td>80.42</td>
+      <td>1990</td>
+      <td>19.38</td>
+      <td>80.62</td>
+      <td>5852</td>
+      <td>33550.39</td>
+      <td>0.007</td>
+      <td>0.048</td>
+      <td>0.078</td>
+      <td>0.345</td>
+      <td>connect 0, read 1777788, write 0, timeout 185</td>
+      <td>8130.56</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_WEB\run 2\wrk_via_waf_c1000_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_WEB_PROXY</td>
+      <td>Injector → Pas d'IPS → Proxy (WAF machine en tant que reverse-proxy, ModSecurity désactivé) → Backend. Test proxy sans fonctionnalités WAF.</td>
+      <td>run 1</td>
+      <td>500.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_WEB_PROXY\run 1</td>
+      <td>16.69</td>
+      <td>83.31</td>
+      <td>1990</td>
+      <td>91.85</td>
+      <td>8.15</td>
+      <td>2090</td>
+      <td>29921.21</td>
+      <td>0.010</td>
+      <td>0.041</td>
+      <td>0.063</td>
+      <td>0.099</td>
+      <td>connect 0, read 1160281, write 0, timeout 0</td>
+      <td>7249.92</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_WEB_PROXY\run 1\wrk_via_waf_c500_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>INJ_WEB_PROXY</td>
+      <td>Injector → Pas d'IPS → Proxy (WAF machine en tant que reverse-proxy, ModSecurity désactivé) → Backend. Test proxy sans fonctionnalités WAF.</td>
+      <td>run 2</td>
+      <td>1000.0</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_WEB_PROXY\run 2</td>
+      <td>16.75</td>
+      <td>83.25</td>
+      <td>1990</td>
+      <td>91.93</td>
+      <td>8.07</td>
+      <td>2090</td>
+      <td>29720.11</td>
+      <td>0.007</td>
+      <td>0.061</td>
+      <td>0.101</td>
+      <td>0.329</td>
+      <td>connect 0, read 1184091, write 0, timeout 206</td>
+      <td>7198.72</td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\INJ_WEB_PROXY\run 2\wrk_via_waf_c1000_t4_200s_run1.txt</td>
+    </tr>
+    <tr>
+      <td>NO INJECTION</td>
+      <td>Tests sans trafic d'injection (contrôles ou mesures à vide).</td>
+      <td>run 1</td>
+      <td></td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\NO INJECTION\run 1</td>
+      <td>10.18</td>
+      <td>89.82</td>
+      <td>398</td>
+      <td>10.14</td>
+      <td>89.86</td>
+      <td>5852</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>None</td>
+      <td></td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>NO INJECTION</td>
+      <td>Tests sans trafic d'injection (contrôles ou mesures à vide).</td>
+      <td>run 2</td>
+      <td></td>
+      <td>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\NO INJECTION\run 2</td>
+      <td>10.20</td>
+      <td>89.80</td>
+      <td>2000</td>
+      <td>10.14</td>
+      <td>89.86</td>
+      <td>2090</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>None</td>
+      <td></td>
+      <td>None</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2>📊 Visualisations graphiques</h2>
+
+<div class="imgbox">
+<h3>💻 Utilisation CPU (IPS &amp; WAF)</h3>
+<p><em>Pourcentage moyen d'utilisation CPU pendant les tests de charge</em></p>
+<img src="./cpu_busy.png" alt="Graphique CPU">
+</div>
+
+<div class="imgbox">
+<h3>🚀 Débit de traitement (Requests/sec)</h3>
+<p><em>Nombre de requêtes HTTP traitées par seconde (mesure wrk)</em></p>
+<img src="./throughput.png" alt="Graphique Throughput">
+</div>
+
+<div class="imgbox">
+<h3>⏱️ Latences par percentile</h3>
+<p><em>Temps de réponse P50 et P90 en millisecondes</em></p>
+<img src="./latency_p50_p90.png" alt="Graphique Latence">
+</div>
+
+<div class="imgbox">
+<h3>📋 Vue d'ensemble combinée</h3>
+<p><em>Analyse comparative complète de tous les indicateurs</em></p>
+<img src="./combined_summary.png" alt="Graphique Combiné">
+</div>
+
+<div class="summary">
+<h2>⚠️ Détails techniques & fichiers manquants</h2>
+<p><strong>Fichiers non trouvés ou non parsables:</strong></p>
+<pre>C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\NO INJECTION\run 1/*wrk*.txt
+C:\Users\donfa\OneDrive\Desktop\BOULOT\RESUTATS TEST\NO INJECTION\run 2/*wrk*.txt</pre>
+</div>
+
+<div style="text-align:center;margin-top:30px;color:#6c757d;font-size:12px">
+<p>Rapport généré automatiquement par analyze_results_report.py</p>
+</div>
+
+</body></html>

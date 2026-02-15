@@ -1,0 +1,4 @@
+Summary for WAF run (duration 210s)
+
+AVG busy (all cpus) = 10.14 % (avg idle=89.86%) over 2090 samples
+avg %CPU (apache process) = 0.00 % over 5852 samples

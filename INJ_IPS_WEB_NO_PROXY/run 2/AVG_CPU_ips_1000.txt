@@ -1,0 +1,3 @@
+Résumé de la mesure IPS (durée 200s)
+
+AVG busy (all cpus) = 33.28 % (avg idle=66.72%) over 2010 samples

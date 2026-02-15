@@ -1,0 +1,5 @@
+Résumé collecte CPU (Sans Suricata)
+Date: 2025-09-10T18:36:52Z
+
+== AVG busy (all cpus) from /users/The_Fox/tests/mpstat_ips.txt ==
+AVG busy (all cpus) = 16.69 % (avg idle=83.31%) over 1990 samples

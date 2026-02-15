@@ -1,0 +1,3 @@
+Summary for WAF run (duration 210s)
+
+AVG busy (all cpus) = 30.65 % (avg idle=69.35%) over 2090 samples
