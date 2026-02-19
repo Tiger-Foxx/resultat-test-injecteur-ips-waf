@@ -38,6 +38,7 @@ Each scenario was tested at a fixed concurrency level (number of simultaneous co
 .
 ├── analyze_results.py          # Basic extraction and plotting script
 ├── analyze_results_report.py   # Full extraction, plotting, and HTML report script
+├── requirements.txt            # Python dependencies
 ├── RESULTS.pdf                 # Compiled research results document
 ├── analysis_output/            # Directory containing all generated outputs
 │   ├── summary_results.csv
@@ -199,19 +200,17 @@ All outputs are written to the `analysis_output/` directory.
 
 ---
 
-## Dependencies and Installation
-
-Python 3.7 or later is required. The only external dependencies are `pandas` and `matplotlib`.
+Python 3.7 or later is required. The external dependencies are `pandas` and `matplotlib`, listed in `requirements.txt`.
 
 ```bash
-pip install pandas matplotlib
+pip install -r requirements.txt
 ```
 
 On Debian/Ubuntu systems:
 
 ```bash
 sudo apt install -y python3-pip
-pip3 install pandas matplotlib
+pip3 install -r requirements.txt
 ```
 
 ---
